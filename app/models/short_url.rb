@@ -3,7 +3,9 @@ class ShortUrl < ApplicationRecord
   CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
 
   validates :full_url, uniqueness: true, on: :create
-  validate :validate_full_url
+  #validates :full_url, format: { with: /\A(http|https):\/\/*(www.)*([a-zA-Z0-9])+.([a-zA-Z0-9]){2,}/,
+  #  message: "Full url is not a valid url"}
+  validate :validate_full_url, on: :create
 
   def short_code
     short_code_length = ShortUrl.count.digits.length
@@ -19,8 +21,9 @@ class ShortUrl < ApplicationRecord
   private
 
   def validate_full_url
-    true
-    # Create regex to match valid URLs
+    unless self.full_url.match?(/\A(http|https):\/\/*(www.)*([a-zA-Z0-9])+.([a-zA-Z0-9]){2,}/)
+      errors.add(:validation, "Full url is not a valid url")
+    end
   end
 
 end
