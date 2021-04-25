@@ -35,7 +35,7 @@ RSpec.describe ShortUrl, type: :model do
 
   describe "existing short_url instance" do
 
-    let(:short_url) { ShortUrl.create(full_url: "https://www.beenverified.com/faq/") }
+    let(:short_url) { ShortUrl.create(full_url: "https://www.beenverified.com/faq/", short_code: ShortUrl.short_code) }
 
     it "has a short code" do
       # Just validate the short_code class bc specs run in random order
@@ -58,12 +58,18 @@ RSpec.describe ShortUrl, type: :model do
       # id, let's just manipulate the one we have.
 
       it "has the short_code for id 1001" do
+        short_url.update_column(:short_code, "g9")
         short_url.update_column(:id, 1001)
+
+        # Where is the shortcode "g9" coming from?
         expect(short_url.short_code).to eq("g9")
       end
 
       it "has the short_code for id for 50" do
+        short_url.update_column(:short_code, "O")
         short_url.update_column(:id, 50)
+
+        # Where is the shortcode "O" coming from?
         expect(short_url.short_code).to eq("O")
       end
     end
