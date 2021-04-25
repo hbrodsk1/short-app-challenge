@@ -15,6 +15,8 @@ class ShortUrlsController < ApplicationController
     @short_url = ShortUrl.new(full_url: full_url, short_code: short_code)
 
     if @short_url.save
+      Resque.enqueue(UpdateTitleJob, @short_url.id)
+
       render json: { short_code: @short_url.short_code }, status: 200
     else
       render json: { errors: "Full url is not a valid url" }, status: 400
