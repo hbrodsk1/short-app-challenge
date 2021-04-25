@@ -49,7 +49,7 @@ RSpec.describe ShortUrlsController, type: :controller do
     let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec", short_code: ShortUrl.short_code) }
 
     it "redirects to the full_url" do
-      get :show, params: { id: short_url.id }, format: :json
+      get :show, params: { id: short_url.short_code }, format: :json
       expect(response).to redirect_to(short_url.full_url)
     end
 
@@ -59,7 +59,7 @@ RSpec.describe ShortUrlsController, type: :controller do
     end
 
     it "increments the click_count for the url" do
-      expect { get :show, params: { id: short_url.id }, format: :json }.to change { ShortUrl.find(short_url.id).click_count }.by(1)
+      expect { get :show, params: { id: short_url.short_code }, format: :json }.to change { ShortUrl.find(short_url.id).click_count }.by(1)
     end
 
   end

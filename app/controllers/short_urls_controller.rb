@@ -12,20 +12,28 @@ class ShortUrlsController < ApplicationController
 
   def create
     full_url = params[:full_url]
-    short_code = ShortUrl.short_code
-    @short_url = ShortUrl.new(full_url: full_url, short_code: short_code)
 
-    if @short_url.save
-      Resque.enqueue(UpdateTitleJob, @short_url.id)
+    @short_url = ShortUrl.find_by(full_url: full_url)
 
+    if @short_url
       render json: { short_code: @short_url.short_code }, status: 200
     else
-      render json: { errors: "Full url is not a valid url" }, status: 400
+      short_code = ShortUrl.short_code
+      @short_url = ShortUrl.new(full_url: full_url, short_code: short_code)
+
+      if @short_url.save
+        Resque.enqueue(UpdateTitleJob, @short_url.id)
+
+        render json: { short_code: @short_url.short_code }, status: 201
+      else
+        render json: { errors: "Full url is not a valid url" }, status: 400
+      end
     end
   end
 
   def show
-    @short_url = ShortUrl.find(params[:id])
+    @short_url = ShortUrl.find_by!(short_code: params[:id])
+
     @short_url.increment!(:click_count)
 
     redirect_to @short_url.full_url
