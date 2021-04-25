@@ -2,7 +2,7 @@ class ShortUrl < ApplicationRecord
 
   CHARACTERS = [*'0'..'9', *'a'..'z', *'A'..'Z'].freeze
 
-  validates :full_url, uniqueness: true, on: :create
+  validates :full_url, :short_code, uniqueness: true, on: :create
   validates :full_url, presence: true
   #validate :validate_full_url, on: :create
   validates :full_url, format: { with: /\A(http|https):\/\/*(www.)*([a-zA-Z0-9])+.([a-zA-Z0-9]){2,}/,
