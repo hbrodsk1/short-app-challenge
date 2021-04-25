@@ -11,7 +11,8 @@ class ShortUrlsController < ApplicationController
 
   def create
     full_url = params[:full_url]
-    @short_url = ShortUrl.new(full_url: full_url)
+    short_code = ShortUrl.short_code
+    @short_url = ShortUrl.new(full_url: full_url, short_code: short_code)
 
     if @short_url.save
       render json: { short_code: @short_url.short_code }, status: 200
@@ -36,8 +37,11 @@ class ShortUrlsController < ApplicationController
   end
 
   def show
-    @short_url = ShortUrl.find(params[:full_url])
+    @short_url = ShortUrl.find(params[:id])
+    @short_url.increment!(:click_count)
 
-    @short_url.click_count += 1
+    redirect_to @short_url.full_url
+  rescue ActiveRecord::RecordNotFound => e
+    render json: { error: e.to_s }, status: 404
   end
 end
