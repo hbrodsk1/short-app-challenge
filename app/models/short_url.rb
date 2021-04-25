@@ -10,7 +10,17 @@ class ShortUrl < ApplicationRecord
 
 
   def self.short_code
-    short_code_length = ShortUrl.count.digits.length
+    number_of_records = ShortUrl.count
+    number_of_potential_characters = CHARACTERS.count
+
+    if number_of_records == 0
+      short_code_length = 1
+    elsif number_of_records % number_of_potential_characters == 0
+      short_code_length = (number_of_records / number_of_potential_characters)
+    else
+      short_code_length = (number_of_records / number_of_potential_characters) + 1
+    end
+
     short_code_chars = CHARACTERS.sample(short_code_length).join
   end
 
