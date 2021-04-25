@@ -29,20 +29,26 @@
  we want the length of the short_code to equal the result of `(number_of_records / number_of_potential_characters) + 1`. For instance, if there are 62 `number_of_potential_characters`, and
  the `number_of_records` is <= 62, then ruby will return 0 (see NOTE above). Since we do not want any short_code with no characters, we add 1 to its length.
 # Current Issues
- I am currently able to get 16/17 tests to pass. I am not able to get `UpdateTitleJob` test to pass.
- I think it is not passing because of config issues, but I have not figured it out.
+ - I am currently able to get 16/17 tests to pass. I am not able to get `UpdateTitleJob` test to pass.
+ I think it is not passing because of config issues, but I have not figured it out. I keep getting:
+ ```Failure/Error: let(:job) { UpdateTitleJob.perform_later(short_url.id) }
 
- The code in `ShortUrl.update_title!` and the perform method of the UpdateTitleJob worker are the same.
+     NoMethodError:
+       undefined method `before' for 1717:Integer
+  ```
+  The integer in the error always appears to be 4 number away from `short_url.id`
+
+ - The code in `ShortUrl.update_title!` and the perform method of the UpdateTitleJob worker are the same.
  I feel confident that the functionlity is correct in the worker, but I'm unsure if something different
  is wanted in the model?
 
- Because I am setting the `short_code` during the creation of a record, a short_code KV pair are
+ - Because I am setting the `short_code` during the creation of a record, a short_code KV pair are
  needed for some of the tests to pass. I'm curious if this is allowed?
 
- I used a built in rails validator to validate the `full_url` instead of the custom method provided?
+ - I used a built in rails validator to validate the `full_url` instead of the custom method provided?
  Is this allowed?
 
- I feel confident that the algorithm works, but I also recognize there could be performance issues with it.
+ - I feel confident that the algorithm works, but I also recognize there could be performance issues with it.
  Since there is a uniqueness constraint on the `short_code` field, as the number of records in the DB
  approaches a number divisible by 62, the odds increase that a combination of characters of n length
  will have already been generated. This means if we have 61 record in the DB, it could theoretically take
