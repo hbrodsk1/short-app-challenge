@@ -15,7 +15,8 @@ class ShortUrl < ApplicationRecord
   end
 
   def update_title!
-    # Do we get this by going to the URL and gettings its title tag?
+    # This is the same work being done in the UpdateTitleJob worker
+    # I'm unsure if this method should have some sort of different functionality
 
     url = URI.parse(self.full_url)
     req = Net::HTTP::Get.new(url.to_s)
@@ -30,8 +31,9 @@ class ShortUrl < ApplicationRecord
   private
 
   def validate_full_url
+    # Opted to use a built in rails validation, instead of a custom. See validations above
     unless self.full_url.match?(/\A(http|https):\/\/*(www.)*([a-zA-Z0-9])+.([a-zA-Z0-9]){2,}/)
-      errors.add(:validation, "Full url is not a valid url")
+      errors.add(:validation, "is not a valid url")
     end
   end
 
