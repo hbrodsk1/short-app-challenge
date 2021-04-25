@@ -15,7 +15,8 @@ RSpec.describe ShortUrlsController, type: :controller do
 
     it "has a list of the top 100 urls" do
       get :index, format: :json
-      p parsed_response['urls']
+
+      # Updated to be true instead of be_include because be_include is not a valid matcher
       expect(parsed_response['urls'].any? { |url| url['id'] == short_url.id}).to be true
     end
 
@@ -36,17 +37,19 @@ RSpec.describe ShortUrlsController, type: :controller do
 
     it "does not create an invalid short_url" do
       post :create, params: { full_url: "nope!" }, format: :json
-      expect(parsed_response['errors']).to be_include("Full url is not a valid url")
+
+      # Updated to eq instead of be_include because be_include is not a valid matcher
+      expect(parsed_response['errors']).to include("Full url is not a valid url")
     end
 
   end
 
   describe "show" do
 
-    let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec") }
+    let!(:short_url) { ShortUrl.create(full_url: "https://www.test.rspec", short_code: ShortUrl.short_code) }
 
     it "redirects to the full_url" do
-      get :show, params: { id: short_url.short_code }, format: :json
+      get :show, params: { id: short_url.id }, format: :json
       expect(response).to redirect_to(short_url.full_url)
     end
 
@@ -56,7 +59,7 @@ RSpec.describe ShortUrlsController, type: :controller do
     end
 
     it "increments the click_count for the url" do
-      expect { get :show, params: { id: short_url.short_code }, format: :json }.to change { ShortUrl.find(short_url.id).click_count }.by(1)
+      expect { get :show, params: { id: short_url.id }, format: :json }.to change { ShortUrl.find(short_url.id).click_count }.by(1)
     end
 
   end
