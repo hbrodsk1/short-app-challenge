@@ -1,4 +1,4 @@
-# Thought Process:
+# Thought Process
  My goal was to compelete the task of returning a short url when a full url was provided.
  To accomplish this, I configured the ShortUrl #short_code method to return an algorithmically
  determined short code. This method is called during the ShortUrls controller's #create action.
@@ -7,7 +7,7 @@
  Because of this setup, both a full_url and a short_code are necessary upon creation in
  order for many of the tests in the test suite to pass.
 
-# Algorithm Used:
+# Algorithm Used
  The algorithm used to generate the short code takes into account a pre-determined set of characters
  and the number of records in the DB `(number_of_records)` and number of characters in the ShortUrl::CHARACTERS constant `(number_of_potential_characters)`.
 
@@ -28,7 +28,7 @@
  If the `number_of_records` can NOT be equally divided by the `number_of_potential_characters`, then
  we want the length of the short_code to equal the result of `(number_of_records / number_of_potential_characters) + 1`. For instance, if there are 62 `number_of_potential_characters`, and
  the `number_of_records` is <= 62, then ruby will return 0 (see NOTE above). Since we do not want any short_code with no characters, we add 1 to its length.
-# Current Issues:
+# Current Issues
  I am currently able to get 16/17 tests to pass. I am not able to get `UpdateTitleJob` test to pass.
  I think it is not passing because of config issues, but I have not figured it out.
 
