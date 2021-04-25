@@ -4,7 +4,8 @@ class ShortUrlsController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def index
-    @short_urls = ShortUrl.order(click_count: :desc)
+    # Return the 100 most clicked ShortUrl records
+    @short_urls = ShortUrl.limit(100).order(click_count: :desc)
 
     render json: { urls: @short_urls }, status: 200
   end
